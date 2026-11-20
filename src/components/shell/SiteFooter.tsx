@@ -46,7 +46,7 @@ export function SiteFooter() {
             aria-label="版本状态指示点"
           />
           <a
-            href="https://github.com/huilang-me/CF-Server-Monitor/"
+            href="https://github.com/Mattease/CF-Server-Monitor/"
             target="_blank"
             rel="noopener noreferrer"
             className="home-footer-title-link"
@@ -101,7 +101,7 @@ export function SiteFooter() {
 
         {/* GitHub 交互链接 */}
         <a
-          href="https://github.com/WAOR/CFSM-SAO"
+          href="https://github.com/Mattease/CFSM-SAO"
           target="_blank"
           rel="noopener noreferrer"
           className="home-footer-github"
