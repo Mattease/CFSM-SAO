@@ -37,7 +37,7 @@ function getNextMockVersion(version: string): string {
   return `v${major}.${minor}.${patch}`;
 }
 
-export function useThemeUpdate(repo = "WAOR/CFSM-SAO") {
+export function useThemeUpdate(repo = "Mattease/CFSM-SAO") {
   const currentVersion = `v${pkg.version || "1.0.0"}`;
   const mockNextVersion = getNextMockVersion(currentVersion);
 
