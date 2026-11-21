@@ -179,8 +179,30 @@ function formatAxisTime(timestampSeconds: number, rangeHours: number) {
 }
 
 export function createTimeAxisFormatter(rangeHours: number) {
-  return (_self: uPlot, splits: number[]): string[] =>
-    splits.map((value) => formatAxisTime(value, rangeHours));
+  return (_self: uPlot, splits: number[]): string[] => {
+    if (rangeHours < 72) {
+      return splits.map((value) => formatAxisTime(value, rangeHours));
+    }
+    // 多天视图里每个刻度都标日期会挤成一排重复日期：每天只在最接近当地
+    // 中午的那个刻度上显示一次日期，其余刻度留空；悬停提示仍是完整时间。
+    const labelIndexByDay = new Map<string, number>();
+    const bestDiffByDay = new Map<string, number>();
+    splits.forEach((value, index) => {
+      const date = new Date(value * 1000);
+      const dayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      const noonSeconds =
+        new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12).getTime() / 1000;
+      const diff = Math.abs(value - noonSeconds);
+      if (!bestDiffByDay.has(dayKey) || diff < bestDiffByDay.get(dayKey)!) {
+        bestDiffByDay.set(dayKey, diff);
+        labelIndexByDay.set(dayKey, index);
+      }
+    });
+    const labeledIndexes = new Set(labelIndexByDay.values());
+    return splits.map((value, index) =>
+      labeledIndexes.has(index) ? formatAxisTime(value, rangeHours) : "",
+    );
+  };
 }
 
 function formatTooltipTime(timestampSeconds: number, rangeHours = 0): string {
