@@ -19,7 +19,7 @@ import { ANONYMOUS_MAX_HISTORY_HOURS } from "@/services/api";
 const DEFAULT_PING_HOURS = 0.167;
 const DEFAULT_LOAD_HOURS = 0.167;
 /** `/api/history/all` 的 hours 上限。 */
-const MAX_HISTORY_HOURS = 168;
+const MAX_HISTORY_HOURS = 720;
 type TimeRangeOption = ReturnType<typeof buildLoadTimeRangeOptions>[number];
 
 function InstanceHomeLink() {
@@ -91,7 +91,7 @@ export function Instance() {
   const [pingHours, setPingHours] = useState(DEFAULT_PING_HOURS);
   const chartControlsRef = useRef<HTMLDivElement | null>(null);
 
-  // 后端最长支持 7 天；未登录访客查询超过 24 小时会被拒绝，所以直接不显示更长的档位。
+  // 后端最长支持 30 天，且未登录访客同样可查全部档位（上限与登录一致）。
   const maxHistoryHours = me?.logged_in
     ? MAX_HISTORY_HOURS
     : ANONYMOUS_MAX_HISTORY_HOURS;

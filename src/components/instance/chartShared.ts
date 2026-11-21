@@ -74,7 +74,7 @@ interface TimeRangeOption {
 
 // load 和 ping 共用同一套历史区间预设；唯一区别是是否在前面加 "实时" 选项，这由
 // buildHistoryRangeOptions 的 includeRealtime 标志处理，而非改预设列表本身。
-// 取值严格落在 CF-Server-Monitor `/api/history/all` 允许的 9 个标准档位（最长 7 天）。
+// 取值严格落在 CF-Server-Monitor `/api/history/all` 允许的标准档位（最长 30 天）。
 const TIME_RANGE_OPTIONS: TimeRangeOption[] = [
   { label: "10 分钟", value: 0.167 },
   { label: "30 分钟", value: 0.5 },
@@ -82,9 +82,9 @@ const TIME_RANGE_OPTIONS: TimeRangeOption[] = [
   { label: "6 小时", value: 6 },
   { label: "12 小时", value: 12 },
   { label: "1 天", value: 24 },
-  { label: "2 天", value: 48 },
-  { label: "4 天", value: 96 },
+  { label: "3 天", value: 72 },
   { label: "7 天", value: 168 },
+  { label: "30 天", value: 720 },
 ];
 
 const PING_TIME_RANGE_OPTIONS: TimeRangeOption[] = [...TIME_RANGE_OPTIONS];

@@ -38,10 +38,10 @@ import { resolvePreferredAppearance } from "@/utils/themeSettings";
 export { ApiRequestError, DatabaseUpgradeRequiredError } from "@/services/cfsm/http";
 
 /** 后端支持的历史查询时长档位（小时）。 */
-export const HISTORY_HOURS_OPTIONS = [0.167, 0.5, 1, 6, 12, 24, 48, 96, 168] as const;
+export const HISTORY_HOURS_OPTIONS = [0.167, 0.5, 1, 6, 12, 24, 72, 168, 720] as const;
 
-/** 未登录用户查询超过 24 小时会被拒绝。 */
-export const ANONYMOUS_MAX_HISTORY_HOURS = 24;
+/** 未登录用户同样可查全部历史档位（后端已放开，与登录上限一致）。 */
+export const ANONYMOUS_MAX_HISTORY_HOURS = 720;
 
 const degradeWarned = new Set<string>();
 export function warnDegradedOnce(key: string, message: string) {

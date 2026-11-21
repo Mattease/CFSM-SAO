@@ -11,23 +11,22 @@ const ALL_STEPS = [
   { label: "6 小时", value: 6 },
   { label: "12 小时", value: 12 },
   { label: "1 天", value: 24 },
-  { label: "2 天", value: 48 },
-  { label: "4 天", value: 96 },
+  { label: "3 天", value: 72 },
   { label: "7 天", value: 168 },
+  { label: "30 天", value: 720 },
 ];
 
 describe("detail chart time ranges", () => {
-  it("offers every backend-supported step to a logged-in admin", () => {
-    // 后端 /api/history/all 最长支持 7 天，共 9 个档位。
-    expect(buildPingTimeRangeOptions(168)).toEqual(ALL_STEPS);
-    expect(buildLoadTimeRangeOptions(168)).toEqual([
+  it("offers every backend-supported step up to 30 days", () => {
+    // 后端 /api/history/all 最长支持 30 天（720 小时），登录与未登录上限一致。
+    expect(buildPingTimeRangeOptions(720)).toEqual(ALL_STEPS);
+    expect(buildLoadTimeRangeOptions(720)).toEqual([
       { label: "实时", value: 0 },
       ...ALL_STEPS,
     ]);
   });
 
-  it("caps anonymous visitors at 24 hours", () => {
-    // 未登录时 hours > 24 会被后端拒绝，因此更长的档位不显示。
+  it("filters out steps above a smaller maxHours cap", () => {
     expect(buildPingTimeRangeOptions(24)).toEqual([
       { label: "10 分钟", value: 0.167 },
       { label: "30 分钟", value: 0.5 },
