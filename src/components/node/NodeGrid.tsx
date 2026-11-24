@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
+import { getDisplayDateParts } from "@/utils/format";
 import { OverviewStatCard } from "./OverviewStatCard";
 import { DraggableCostBall } from "@/components/node/DraggableCostBall";
 import { ClusterHeatmap } from "./ClusterHeatmap";
@@ -126,7 +127,7 @@ function getTimeGreetingInfo(
   offlineNodes: number,
   renewalCount: number,
 ): { greeting: string; subtitle: string } {
-  const hour = new Date().getHours();
+  const hour = Number(getDisplayDateParts(Date.now()).hour);
   let greeting = "早上好";
   if (hour >= 0 && hour < 5) greeting = "夜深了";
   else if (hour >= 5 && hour < 11) greeting = "早上好";

@@ -1,22 +1,14 @@
 import type { PingOverviewBucket } from "@/types/cfsm";
-import { trimFixed } from "@/utils/format";
+import { getDisplayDateParts, trimFixed } from "@/utils/format";
 
 function formatPingBucketWindow(bucket: PingOverviewBucket | null) {
   if (!bucket || bucket.startAt == null || bucket.endAt == null) {
     return null;
   }
 
-  const start = new Date(bucket.startAt);
-  const end = new Date(bucket.endAt);
-  const startText = `${start.getHours().toString().padStart(2, "0")}:${start
-    .getMinutes()
-    .toString()
-    .padStart(2, "0")}`;
-  const endText = `${end.getHours().toString().padStart(2, "0")}:${end
-    .getMinutes()
-    .toString()
-    .padStart(2, "0")}`;
-  return `${startText} - ${endText}`;
+  const start = getDisplayDateParts(bucket.startAt);
+  const end = getDisplayDateParts(bucket.endAt);
+  return `${start.hour}:${start.minute} - ${end.hour}:${end.minute}`;
 }
 
 function formatLatencyBucketSummary(bucket: PingOverviewBucket | null) {

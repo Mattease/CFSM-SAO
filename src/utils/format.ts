@@ -1,9 +1,56 @@
 const UNITS = ["B", "KB", "MB", "GB", "TB", "PB"] as const;
+
+// 全站时间显示固定北京时间，不随访客浏览器时区漂移
+export const DISPLAY_TIME_ZONE = "Asia/Shanghai";
+
 const CLOCK_TIME_FORMATTER = new Intl.DateTimeFormat("zh-CN", {
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
+  timeZone: DISPLAY_TIME_ZONE,
 });
+
+const DATE_PARTS_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: DISPLAY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+export interface DisplayDateParts {
+  year: number;
+  month: string;
+  day: string;
+  hour: string;
+  minute: string;
+  second: string;
+}
+
+/** 按北京时间拆出年月日时分秒（month/day/hour 等均为两位补零字符串） */
+export function getDisplayDateParts(timeMs: number): DisplayDateParts {
+  const values: Record<string, string> = {};
+  for (const part of DATE_PARTS_FORMATTER.formatToParts(new Date(timeMs))) {
+    if (part.type !== "literal") values[part.type] = part.value;
+  }
+  return {
+    year: Number(values.year ?? 0),
+    month: values.month ?? "00",
+    day: values.day ?? "00",
+    hour: values.hour ?? "00",
+    minute: values.minute ?? "00",
+    second: values.second ?? "00",
+  };
+}
+
+/** 北京时间的 HH:MM:SS */
+export function formatDisplayClock(timeMs: number): string {
+  const parts = getDisplayDateParts(timeMs);
+  return `${parts.hour}:${parts.minute}:${parts.second}`;
+}
 const TRAFFIC_RATE_THRESHOLDS: Array<{ unit: Exclude<TrafficRateUnit, "bps">; divisor: number }> = [
   { unit: "Tbps", divisor: 1_000_000_000_000 },
   { unit: "Gbps", divisor: 1_000_000_000 },
@@ -78,7 +125,7 @@ export function formatBytes(n: number | undefined | null): string {
   return `${v.toFixed(dec)} ${UNITS[idx]}`;
 }
 
-/** 只显示时分（本地时区），用于峰值时间、更新时间等场景。 */
+/** 只显示时分（固定北京时间），用于峰值时间、更新时间等场景。 */
 export function formatClockTime(timeMs: number | null | undefined): string {
   if (timeMs == null || !Number.isFinite(timeMs)) return "—";
   return CLOCK_TIME_FORMATTER.format(timeMs);

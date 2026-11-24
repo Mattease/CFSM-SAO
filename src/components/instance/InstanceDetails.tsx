@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { useNodeMeta, useNodeMetrics } from "@/hooks/useNode";
 import { InstanceSwitcher } from "./InstanceSwitcher";
 import {
+  DISPLAY_TIME_ZONE,
   formatBytes,
   formatUptimeDays,
 } from "@/utils/format";
@@ -13,6 +14,7 @@ const TIME_FORMATTER = new Intl.DateTimeFormat("zh-CN", {
   hour: "2-digit",
   minute: "2-digit",
   second: "2-digit",
+  timeZone: DISPLAY_TIME_ZONE,
 });
 
 export function InstanceDetails({

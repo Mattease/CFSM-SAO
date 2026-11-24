@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import type uPlot from "uplot";
+import { getDisplayDateParts } from "@/utils/format";
 
 // 共享的图表配色。LoadChart 按指标 (cpu/memory/…) 取色，PingChart 按 task 循环取色；
 // 两者都取自这一处单一来源，避免 hex 值在两个图表间漂移。
@@ -156,20 +157,9 @@ export function toChartSeconds(value: string | number): number {
   return Number.isNaN(parsed) ? 0 : parsed / 1000;
 }
 
-function pad2(value: number) {
-  return value.toString().padStart(2, "0");
-}
-
+// 图表时间固定按北京时间拆分，不随浏览器时区变化
 function getDateParts(timestampSeconds: number) {
-  const date = new Date(timestampSeconds * 1000);
-  return {
-    year: date.getFullYear(),
-    month: pad2(date.getMonth() + 1),
-    day: pad2(date.getDate()),
-    hour: pad2(date.getHours()),
-    minute: pad2(date.getMinutes()),
-    second: pad2(date.getSeconds()),
-  };
+  return getDisplayDateParts(timestampSeconds * 1000);
 }
 
 function formatAxisTime(timestampSeconds: number, rangeHours: number) {
@@ -183,15 +173,16 @@ export function createTimeAxisFormatter(rangeHours: number) {
     if (rangeHours < 72) {
       return splits.map((value) => formatAxisTime(value, rangeHours));
     }
-    // 多天视图里每个刻度都标日期会挤成一排重复日期：每天只在最接近当地
-    // 中午的那个刻度上显示一次日期，其余刻度留空；悬停提示仍是完整时间。
+    // 多天视图里每个刻度都标日期会挤成一排重复日期：每天只在最接近北京
+    // 时间中午的那个刻度上显示一次日期，其余刻度留空；悬停提示仍是完整时间。
     const labelIndexByDay = new Map<string, number>();
     const bestDiffByDay = new Map<string, number>();
     splits.forEach((value, index) => {
-      const date = new Date(value * 1000);
-      const dayKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      const parts = getDateParts(value);
+      const dayKey = `${parts.year}-${parts.month}-${parts.day}`;
+      // 北京时间当天 12:00 的时间戳（北京固定 UTC+8、无夏令时，即 UTC 04:00）
       const noonSeconds =
-        new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12).getTime() / 1000;
+        Date.UTC(parts.year, Number(parts.month) - 1, Number(parts.day), 4) / 1000;
       const diff = Math.abs(value - noonSeconds);
       if (!bestDiffByDay.has(dayKey) || diff < bestDiffByDay.get(dayKey)!) {
         bestDiffByDay.set(dayKey, diff);

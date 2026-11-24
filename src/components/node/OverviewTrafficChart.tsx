@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { formatByteRate, formatByteRateLabel } from "@/utils/format";
+import { formatByteRate, formatByteRateLabel, formatDisplayClock } from "@/utils/format";
 import { usePreferences } from "@/hooks/usePreferences";
 import { useThemeSettings } from "@/hooks/useThemeSettings";
 import type { MatrixColorTheme } from "@/utils/themeSettings";
@@ -19,8 +19,7 @@ interface HoverInfo {
 const MAX_HISTORY_POINTS = 16;
 
 function formatPointTime(timeMs: number): string {
-  const d = new Date(timeMs);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;
+  return formatDisplayClock(timeMs);
 }
 
 // 动态整值标尺刻度对齐算法：确保 Y 轴在动态缩放时数值始终整洁优雅（如 400 MB/s、200 MB/s、0）
@@ -285,8 +284,7 @@ function SingleTrafficCard({
 
     for (let i = 0; i <= timeSteps; i++) {
       const x = paddingLeft + (plotWidth / timeSteps) * i;
-      const t = new Date(startTime + (timeSpan / timeSteps) * i);
-      const timeStr = `${String(t.getHours()).padStart(2, "0")}:${String(t.getMinutes()).padStart(2, "0")}:${String(t.getSeconds()).padStart(2, "0")}`;
+      const timeStr = formatDisplayClock(startTime + (timeSpan / timeSteps) * i);
       if (i === 0) {
         ctx.textAlign = "left";
       } else if (i === timeSteps) {
