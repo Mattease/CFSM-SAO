@@ -6,13 +6,14 @@ import { fetchWithTimeout } from "@/utils/abort";
  * - 后端：`/api/config` 的 `version`；最新版 `last_workers_version` **只在登录后下发**
  *   （后端文档：自定义主题不要依赖匿名请求展示升级提示），所以提醒只给登录站长看。
  * - 主题：当前版本读页面里的 `<meta name="theme-version">`（构建时写入，后端反代主题时原样保留）；
- *   最新版读本仓库 `dist` 分支产物里的同一个 meta —— 发布流程保证 dist 只在正式版推 main 后才更新，
- *   preview 不会让站长看到「有新版」。走 raw.githubusercontent.com（后端 CSP 的 connect-src 默认放行），
- *   只在登录后查，结果在本机缓存 12 小时（失败 1 小时），访客不会多出任何第三方请求。
+ *   最新版读本 fork（Mattease/CFSM-SAO）`kuskure` 分支产物里的同一个 meta —— 该分支只放正式版
+ *   构建产物，preview 不会让站长看到「有新版」。走 raw.githubusercontent.com（后端 CSP 的
+ *   connect-src 默认放行），只在登录后查，结果在本机缓存 12 小时（失败 1 小时），
+ *   访客不会多出任何第三方请求。
  */
 
 export const THEME_RELEASE_INDEX_URL =
-  "https://raw.githubusercontent.com/WAOR/CFSM-SAO/dist/index.html";
+  "https://raw.githubusercontent.com/Mattease/CFSM-SAO/kuskure/index.html";
 
 const LATEST_THEME_CACHE_KEY = "cfsm-sao:theme-latest-version";
 const LATEST_THEME_TTL_MS = 12 * 60 * 60 * 1000;
